@@ -17,6 +17,8 @@ class SearchViewController: UITableViewController, UITableViewDataSource, UITabl
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    title = "DR TV"
+    
     self.searchBar!.becomeFirstResponder()
     
     searchFor("bagedyst")

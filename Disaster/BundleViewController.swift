@@ -15,6 +15,8 @@ class BundleViewController : UITableViewController, UITableViewDataSource, UITab
   var episodes : Array<JSONValue>?
   
   override func viewDidLoad() {
+    super.viewDidLoad()
+    
     title = bundle!["Title"].string
     
     getEpisodes()
