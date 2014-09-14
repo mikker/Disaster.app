@@ -1,0 +1,6 @@
+[submodule "Vendor/SwiftyJSON"]
+	path = Vendor/SwiftyJSON
+	url = https://github.com/lingoer/SwiftyJSON.git
+[submodule "Vendor/Dollar.swift"]
+	path = Vendor/Dollar.swift
+	url = https://github.com/ankurp/Dollar.swift.git
