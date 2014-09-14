@@ -53,6 +53,12 @@ class SearchViewController: UITableViewController, UITableViewDataSource, UITabl
     
     return cell
   }
+  
+  // MARK: UITableViewDelegate
+  
+  override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    tableView.deselectRowAtIndexPath(indexPath, animated: true)
+  }
  
   // MARK: UISearchDisplay
   
@@ -68,7 +74,9 @@ class SearchViewController: UITableViewController, UITableViewDataSource, UITabl
     DRMU.sharedClient.GET(path, completionHandler: { (response, obj, error) -> Void in
       var resultsCount = obj["TotalSize"].number
       println("Returned \(resultsCount) results")
-      self.results = obj["Data"].array!
+      self.results = sorted(obj["Data"].array!) {
+        $0["Title"].string! < $1["Title"].string!
+      }
       self.tableView.reloadData()
     })
   }
