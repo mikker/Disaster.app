@@ -9,10 +9,19 @@
 import UIKit
 import MediaPlayer
 
-class BundleViewController : UITableViewController, UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate {
+class BundleViewController : UITableViewController, UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, GCKDeviceScannerListener, GCKDeviceManagerDelegate, GCKMediaControlChannelDelegate {
   
   var bundle : JSONValue?
   var episodes : Array<JSONValue>?
+  
+  var mediaControlChannel : GCKMediaControlChannel?
+  var applicationMetadata : GCKApplicationMetadata?
+  var selectedDevice : GCKDevice?
+  var deviceScanner : GCKDeviceScanner?
+  var deviceManager : GCKDeviceManager?
+  var mediaInformation : GCKMediaInformation?
+
+  private let ReceiverID = "37EEA3C9"
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -20,6 +29,7 @@ class BundleViewController : UITableViewController, UITableViewDataSource, UITab
     title = bundle!["Title"].string
     
     getEpisodes()
+    scanForDevices()
   }
   
   // MARK: UITableViewDataSource
@@ -58,9 +68,9 @@ class BundleViewController : UITableViewController, UITableViewDataSource, UITab
     actionSheet.title = episode["Title"].string!
     actionSheet.addButtonWithTitle("Copy URL")
     actionSheet.addButtonWithTitle("Play now")
-//    actionSheet.addButtonWithTitle("!Chromecast")
+    actionSheet.addButtonWithTitle("Chromecast")
     actionSheet.addButtonWithTitle("Cancel")
-    actionSheet.cancelButtonIndex = 2
+    actionSheet.cancelButtonIndex = 3
     actionSheet.tag = indexPath.row
     actionSheet.showInView(view)
     
@@ -74,11 +84,46 @@ class BundleViewController : UITableViewController, UITableViewDataSource, UITab
     switch buttonIndex {
     case 0: copyURL(episode); break
     case 1: playNow(episode); break
+    case 2: chromecast(episode); break
     default: break
     }
   }
   
+  // MARK: GCKDeviceScannerListener
+  
+  func deviceDidComeOnline(device: GCKDevice!) {
+    println("Chromecast found '\(device.friendlyName)'")
+    selectedDevice = device
+    deviceManager = GCKDeviceManager(device: device, clientPackageName: "Disaster")
+    deviceManager!.delegate = self
+    deviceManager!.connect()
+  }
+  
+  // MARK: GCKDeviceManagerDelegate
+  
+  func deviceManagerDidConnect(deviceManager: GCKDeviceManager!) {
+    println("Chromecast connected")
+    deviceManager.launchApplication(ReceiverID)
+  }
+  
+  func deviceManager(deviceManager: GCKDeviceManager!, didConnectToCastApplication applicationMetadata: GCKApplicationMetadata!, sessionID: String!, launchedApplication: Bool) {
+    mediaControlChannel = GCKMediaControlChannel()
+    mediaControlChannel!.delegate = self
+    deviceManager.addChannel(mediaControlChannel)
+    mediaControlChannel!.requestStatus()
+  }
+  
+  func deviceManager(deviceManager: GCKDeviceManager!, didReceiveStatusForApplication newApplicationMetadata: GCKApplicationMetadata!) {
+    applicationMetadata = newApplicationMetadata
+  }
+  
   // MARK: -
+  
+  private func scanForDevices() {
+    deviceScanner = GCKDeviceScanner()
+    deviceScanner!.addListener(self)
+    deviceScanner!.startScan()
+  }
   
   private func playNow(episode : JSONValue) {
     getVideoResource(videoResourceForEpisode(episode)!, completionHandler: { (response, json, error) -> Void in
@@ -93,6 +138,16 @@ class BundleViewController : UITableViewController, UITableViewDataSource, UITab
       let bestUri = self.bestQualityVideoLink(json)["Uri"].string
       UIPasteboard.generalPasteboard().string = bestUri
       println(bestUri)
+    })
+  }
+  
+  private func chromecast(episode : JSONValue) {
+    getVideoResource(videoResourceForEpisode(episode)!, completionHandler: { (response, json, error) -> Void in
+      let bestUri = self.bestQualityVideoLink(json)["Uri"].string!
+      var meta = GCKMediaMetadata()
+      meta.setString(episode["Title"].string, forKey: kGCKMetadataKeyTitle)
+      var info = GCKMediaInformation(contentID: bestUri, streamType: GCKMediaStreamType.None, contentType: "video/mp4", metadata: meta, streamDuration: 0, mediaTracks: nil, textTrackStyle: nil, customData: nil)
+      self.mediaControlChannel!.loadMedia(info)
     })
   }
   
