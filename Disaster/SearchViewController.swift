@@ -20,8 +20,6 @@ class SearchViewController: UITableViewController, UITableViewDataSource, UITabl
     title = "DR TV"
     
     self.searchBar!.becomeFirstResponder()
-    
-    searchFor("bagedyst")
   }
   
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

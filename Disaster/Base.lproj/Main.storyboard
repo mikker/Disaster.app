@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
-        <!--Disaster-->
+        <!--Search View Controller-->
         <scene sceneID="Gd9-ps-Xyf">
             <objects>
                 <tableViewController id="5qk-6H-umh" customClass="SearchViewController" customModule="Disaster" customModuleProvider="target" sceneMemberID="viewController">
@@ -44,7 +44,7 @@
                             <outlet property="delegate" destination="5qk-6H-umh" id="4An-DC-Zx4"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Disaster" id="pAN-3d-iqy"/>
+                    <navigationItem key="navigationItem" id="pAN-3d-iqy"/>
                     <connections>
                         <outlet property="searchBar" destination="dH7-1O-A0g" id="Ifg-rv-b8V"/>
                     </connections>
@@ -56,7 +56,6 @@
         <!--Bundle View Controller-->
         <scene sceneID="xnK-ce-3GL">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qb4-E5-KDT" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="AEj-R9-Cy4" customClass="BundleViewController" customModule="Disaster" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hQm-ei-e2r">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
@@ -76,6 +75,7 @@
                         </connections>
                     </tableView>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qb4-E5-KDT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1858" y="327"/>
         </scene>
