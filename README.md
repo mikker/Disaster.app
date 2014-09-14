@@ -14,6 +14,8 @@
 
 * Chromecast playback controls
     - Right now you can stop casting using your Chrome browser
+    - Also maybe follow Chromecasts UI guidelines.
+    - People _could_ have more than one Chromecast
 
 ---
 
